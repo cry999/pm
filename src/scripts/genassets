@@ -1,0 +1,7 @@
+#!/bin/sh
+
+PROJECT_ROOT=$(realpath $(dirname $0)/..)
+BIN=$PROJECT_ROOT/bin
+PACK=$BIN/pack
+
+$PACK -recursive /keys /assets/keys

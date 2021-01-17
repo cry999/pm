@@ -1,0 +1,11 @@
+pkgname="models"
+output="pkg/infrastructure/persistence/models"
+
+[mysql]
+dbname="{{ .Env.MYSQL_DATABASE }}"
+host="{{ .Env.MYSQL_HOST }}"
+port="{{ .Env.MYSQL_PORT }}"
+user="{{ .Env.MYSQL_USER }}"
+pass="{{ .Env.MYSQL_PASSWORD }}"
+sslmode="false"
+blacklist=["schema_migrations"]

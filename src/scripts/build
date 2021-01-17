@@ -1,0 +1,7 @@
+#!/bin/sh
+
+SCRIPT=$(realpath $(dirname $0))
+
+$SCRIPT/setup
+
+go build -o bin ./...

@@ -1,0 +1,13 @@
+#!/bin/sh
+
+PROJECT_ROOT=$(realpath $(dirname $0)/..)
+SCRIPT=$PROJECT_ROOT/scripts
+GENCONFIGS=$SCRIPT/genconfigs
+SQLBOILER=$SCRIPT/sqlboiler
+
+cd $PROJECT_ROOT
+
+$GENCONFIGS
+$SQLBOILER mysql --wipe
+
+go generate ./...

@@ -1,0 +1,10 @@
+#!/bin/sh
+
+PACKAGES=$(find . -type f -name '*.go' -not -name 'mock_*' | xargs -I {} dirname {} | sort | uniq)
+SCRIPT=$(realpath $(dirname $0))
+
+$SCRIPT/setup
+
+for p in $PACKAGES; do
+    go test -cover $p
+done

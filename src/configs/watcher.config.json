@@ -1,0 +1,17 @@
+{
+    "setup": [
+        "mkdir -p temp"
+    ],
+    "build": "go build -o ./temp/server ./cmd/server",
+    "run": "./temp/server",
+    "cleanup": [
+        "rm -rf temp"
+    ],
+    "excludes": [
+        "migrations",
+        "temp",
+        ".vscode",
+        "scripts"
+    ],
+    "delay": "1s"
+}

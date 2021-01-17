@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# This wraps `sqlboiler` to run `sqlboiler` always on project root.
+PROJECT_ROOT=$(realpath $(dirname $0)/..)
+
+cd $PROJECT_ROOT && sqlboiler $@

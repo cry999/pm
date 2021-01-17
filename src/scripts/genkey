@@ -1,0 +1,4 @@
+#!/bin/bash
+
+openssl genrsa 4096 > keys/jwt-rs256.key
+openssl rsa -pubout < keys/jwt-rs256.key > keys/jwt-rs256.pub.key

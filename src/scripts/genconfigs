@@ -1,0 +1,10 @@
+#!/bin/sh
+
+HERE="$(realpath $(dirname $0))"
+TEMPLATE="$HERE/templates"
+CONFIG="$(realpath $HERE/..)/configs"
+
+# generate `sqlboiler` config
+SQLBOILER_CONFIG=$HOME/.config/sqlboiler
+mkdir -p $SQLBOILER_CONFIG
+gomplate -f $TEMPLATE/sqlboiler.toml.temp > $SQLBOILER_CONFIG/sqlboiler.toml

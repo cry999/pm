@@ -1,0 +1,39 @@
+version: '3.8'
+
+x-mysql-setting: &mysql-setting
+  MYSQL_USER: pm-projects
+  MYSQL_PASSWORD: P@ssw0rd
+  MYSQL_DATABASE: pm-projects
+
+services:
+  pubsub.projects.pm:
+    container_name: pm-projects-pubsub
+    image: redis:latest
+
+  db.projects.pm:
+    container_name: pm-projects-db
+    image: mysql:8
+    environment:
+      <<: *mysql-setting
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - ./docker/mysql/data/agile:/var/lib/mysql
+      - ./docker/mysql/conf.d:/etc/mysql/conf.d
+    security_opt:
+      - 'seccomp:unconfined'
+
+  app.projects.pm:
+    container_name: pm-projects-app
+    build:
+      context: ./src
+    environment:
+      <<: *mysql-setting
+      MYSQL_HOST: db.projects.pm
+      MYSQL_PORT: 3306
+      PUBSUB_HOST: pubsub.projects.pm
+      PUBSUB_PORT: 6379
+    volumes:
+      - ./src:/app
+    ports:
+      - '29000:8080'
+    entrypoint: watcher -config ./configs/watcher.config.json
