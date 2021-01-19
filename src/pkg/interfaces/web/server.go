@@ -60,6 +60,7 @@ func (s *server) GlobalUse(middlewares ...Middleware) {
 }
 
 // Route ...
+// TODO: CORS 対応を強制で実行している。うまいこと middleware に落とし込めるようにしたい。
 func (s *server) Route(method, path string, handler HandlerFunc, middlewares ...Middleware) {
 	middlewares = append(s.middlewares, middlewares...)
 
@@ -81,8 +82,31 @@ func (s *server) Route(method, path string, handler HandlerFunc, middlewares ...
 			middleware := middlewares[i]
 			handler = middleware(handler)
 		}
-		handler(rc)
-	}).Methods(method)
+		if r.Method == http.MethodOptions {
+			// CORS preflight
+			if origin := rc.RequestHeader().Get("Origin"); origin != "" && origin != "*" {
+				rc.ResponseHeader().Set("Access-Control-Allow-Origin", rc.RequestHeader().Get("Origin"))
+				rc.ResponseHeader().Set("Access-Control-Allow-Methods", "*")
+				rc.ResponseHeader().Set("Access-Control-Allow-Headers", "*")
+				rc.ResponseHeader().Set("Access-Control-Max-Age", "86400")
+			}
+			rc.NoContent()
+			return
+		}
+		cors(handler)(rc)
+	}).Methods(method, http.MethodOptions)
+}
+
+// TODO: CORS を適切なファイルに移動する
+func cors(handler HandlerFunc) HandlerFunc {
+	return func(rc *RequestContext) error {
+		rc.Logger().Debug("CORS called")
+		if origin := rc.RequestHeader().Get("Origin"); origin != "" && origin != "*" {
+			rc.ResponseHeader().Set("Access-Control-Allow-Origin", origin)
+		}
+		err := handler(rc)
+		return err
+	}
 }
 
 // Run ...

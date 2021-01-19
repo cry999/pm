@@ -43,6 +43,15 @@ func (rc *RequestContext) ResponseHeader() http.Header {
 	return rc.w.Header()
 }
 
+// * ------------------------ *
+// * --- Response Utilies --- *
+// * ------------------------ *
+
+// NoContent ...
+func (rc *RequestContext) NoContent() {
+	rc.w.WriteHeader(204)
+}
+
 // JSONResponse ...
 func (rc *RequestContext) JSONResponse(code int, v interface{}) {
 	rc.w.Header().Set("Content-Type", "application/json")
