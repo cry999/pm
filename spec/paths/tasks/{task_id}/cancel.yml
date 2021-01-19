@@ -1,8 +1,7 @@
 put:
   description: The Task is not done for the time being
   tags:
-    - Task Status Update API
-    - Task API
+    - Task
   security:
     - bearer: []
   parameters:

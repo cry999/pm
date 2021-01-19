@@ -1,8 +1,7 @@
 put:
   description: Redo the Task
   tags:
-    - Task Status Update API
-    - Task API
+    - Task
   security:
     - bearer: []
   parameters:

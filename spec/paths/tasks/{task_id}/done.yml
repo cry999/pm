@@ -1,8 +1,7 @@
 put:
   description: Work in progress Task is done
   tags:
-    - Task Status Update API
-    - Task API
+    - Task
   security:
     - bearer: []
   parameters:

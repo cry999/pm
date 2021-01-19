@@ -1,8 +1,7 @@
 put:
   description: The Task will be put on hold for a while.
   tags:
-    - Task Status Update API
-    - Task API
+    - Task
   security:
     - bearer: []
   parameters:

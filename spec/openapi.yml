@@ -16,7 +16,7 @@ paths:
   /oauth/signin:
     $ref: ./paths/oauth/signin.yml
   #
-  # Task API
+  # Task
   #
   /tasks:
     $ref: ./paths/tasks/tasks.yml

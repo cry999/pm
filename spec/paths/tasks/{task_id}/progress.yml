@@ -1,8 +1,7 @@
 put:
   description: Make TODO task work in progress
   tags:
-    - Task Status Update API
-    - Task API
+    - Task
   security:
     - bearer: []
   parameters:

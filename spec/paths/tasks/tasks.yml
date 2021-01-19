@@ -1,6 +1,6 @@
 get:
   tags:
-    - Task API
+    - Task
   description: List all tasks associated with authenticated user.
   security:
     - bearer: []
@@ -14,7 +14,7 @@ get:
 
 post:
   tags:
-    - Task API
+    - Task
   description: Create a new task
   security:
     - bearer: []

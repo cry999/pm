@@ -1,6 +1,6 @@
 get:
   tags:
-    - Task API
+    - Task
   security:
     - bearer: []
   parameters:
