@@ -1,0 +1,43 @@
+get:
+  tags:
+    - Task API
+  description: List all tasks associated with authenticated user.
+  security:
+    - bearer: []
+  responses:
+    '200':
+      description: OK
+      content:
+        'application/json':
+          schema:
+            $ref: '#components/schemas/Task'
+
+post:
+  tags:
+    - Task API
+  description: Create a new task
+  security:
+    - bearer: []
+  requestBody:
+    required: true
+    content:
+      'application/json':
+        schema:
+          type: object
+          properties:
+            name:
+              type: string
+              example: Example task
+            description:
+              type: string
+              example: This task is for example
+          required:
+            - name
+            - description
+  responses:
+    '201':
+      description: New task is successfully created
+      content:
+        'application/json':
+          schema:
+            $ref: '#components/schemas/Task'

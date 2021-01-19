@@ -1,0 +1,42 @@
+{
+    "id": "https://github.com/cry999/pm-projects/spec/_schema/paths.json",
+    "type": "object",
+    "title": "openapi-path-item",
+    "properties": {
+        "$ref": {
+            "type": "string"
+        },
+        "summary": {
+            "type": "string"
+        },
+        "description": {
+            "type": "string"
+        },
+        "servers": {
+            "type": "array",
+            "items": {
+                "$ref": "https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/schemas/v3.0/schema.json#/definitions/Server"
+            }
+        },
+        "parameters": {
+            "type": "array",
+            "items": {
+                "oneOf": [{
+                        "$ref": "https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/schemas/v3.0/schema.json#/definitions/Parameter"
+                    },
+                    {
+                        "$ref": "https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/schemas/v3.0/schema.json#/definitions/Reference"
+                    }
+                ]
+            },
+            "uniqueItems": true
+        }
+    },
+    "patternProperties": {
+        "^(get|put|post|delete|options|head|patch|trace)$": {
+            "$ref": "https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/schemas/v3.0/schema.json#/definitions/Operation"
+        },
+        "^x-": {}
+    },
+    "additionalProperties": false
+}

@@ -1,0 +1,37 @@
+schema:
+  type: object
+  properties:
+    id:
+      type: string
+      format: xid
+    name:
+      type: string
+      example: Example task
+    description:
+      type: string
+      example: This task is example
+    status:
+      type: string
+      enum:
+        - TODO
+        - WIP
+        - DONE
+        - CANCEL
+        - PENDING
+    owner_id:
+      type: string
+      example: 0123456789abcdefghij
+    assignee_id:
+      type: string
+      nullable: true
+      example: 0123456789abcdefghij
+    deadline:
+      type: string
+      nullable: true
+      format: date-time
+    crated_at:
+      type: string
+      format: date-time
+    updated_at:
+      type: string
+      format: date-time

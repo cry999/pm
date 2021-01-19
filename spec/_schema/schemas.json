@@ -1,0 +1,11 @@
+{
+    "id": "https://github.com/cry999/pm-projects/spec/_schema/schemas.json",
+    "type": "object",
+    "title": "openapi-schema",
+    "properties": {
+        "schema": {
+            "$ref": "https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/schemas/v3.0/schema.json#/definitions/Schema"
+        }
+    },
+    "additionalProperties": false
+}

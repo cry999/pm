@@ -1,0 +1,51 @@
+openapi: '3.0.2'
+
+info:
+  title: PM API Specifications
+  version: '0.0.1'
+
+servers:
+  - url: http://localhost:29000/api/v1
+
+paths:
+  #
+  # authentication API
+  #
+  /oauth/signup:
+    $ref: ./paths/oauth/signup.yml
+  /oauth/signin:
+    $ref: ./paths/oauth/signin.yml
+  #
+  # Task API
+  #
+  /tasks:
+    $ref: ./paths/tasks/tasks.yml
+  /tasks/{task_id}:
+    $ref: ./paths/tasks/{task_id}.yml
+  /tasks/{task_id}/progress:
+    $ref: ./paths/tasks/{task_id}/progress.yml
+  /tasks/{task_id}/done:
+    $ref: ./paths/tasks/{task_id}/done.yml
+  /tasks/{task_id}/redo:
+    $ref: ./paths/tasks/{task_id}/redo.yml
+  /tasks/{task_id}/cancel:
+    $ref: ./paths/tasks/{task_id}/cancel.yml
+  /tasks/{task_id}/hold:
+    $ref: ./paths/tasks/{task_id}/hold.yml
+
+components:
+  schemas:
+    Credential:
+      $ref: ./components/schemas/credential.yml#/schema
+    Token:
+      $ref: ./components/schemas/token.yml#/schema
+    Task:
+      $ref: ./components/schemas/task.yml#/schema
+  securitySchemes:
+    $ref: ./components/security/bearer.yml
+  examples:
+    XID:
+      $ref: ./components/examples/xid.yml#/example
+  parameters:
+    TaskID:
+      $ref: ./components/parameters/path/id.yml#/parameter

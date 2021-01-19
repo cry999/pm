@@ -1,0 +1,14 @@
+get:
+  tags:
+    - Task API
+  security:
+    - bearer: []
+  parameters:
+    - $ref: '#components/parameters/TaskID'
+  responses:
+    '200':
+      description: Successfuly read task
+      content:
+        'application/json':
+          schema:
+            $ref: '#components/schemas/Task'

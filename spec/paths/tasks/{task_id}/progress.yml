@@ -1,0 +1,16 @@
+put:
+  description: Make TODO task work in progress
+  tags:
+    - Task Status Update API
+    - Task API
+  security:
+    - bearer: []
+  parameters:
+    - $ref: '#components/parameters/TaskID'
+  responses:
+    '200':
+      description: Accept
+      content:
+        'application/json':
+          schema:
+            $ref: '#components/schemas/Task'

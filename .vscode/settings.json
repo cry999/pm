@@ -10,5 +10,22 @@
     "files.associations": {
         "**/scripts/[!.]": "shellscript",
     },
+    "yaml.schemas": {
+        "spec/_schema/paths.json": [
+            "spec/paths/*.yml",
+        ],
+        "spec/_schema/schemas.json": [
+            "spec/components/schemas/*.yml",
+        ],
+        "spec/_schema/examples.json": [
+            "spec/components/examples/*.yml",
+        ],
+        "spec/_schema/parameters.json": [
+            "spec/components/parameters/*.yml",
+        ]
+    },
+    "yaml.schemaStore.enable": false,
+    "yaml.completion": true,
+    "yaml.format.singleQuote": true,
     "go.inferGopath": false
 }

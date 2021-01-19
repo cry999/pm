@@ -1,0 +1,16 @@
+put:
+  description: The Task is not done for the time being
+  tags:
+    - Task Status Update API
+    - Task API
+  security:
+    - bearer: []
+  parameters:
+    - $ref: '#components/parameters/TaskID'
+  responses:
+    '200':
+      description: Accept
+      content:
+        'application/json':
+          schema:
+            $ref: '#components/schemas/Task'

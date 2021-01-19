@@ -1,0 +1,17 @@
+post:
+  description: Registered user sign in
+  tags:
+    - OAuth
+  requestBody:
+    required: true
+    content:
+      'application/json':
+        schema:
+          $ref: '#components/schemas/Token'
+  responses:
+    '200':
+      description: Succesfully singin
+      content:
+        'application/json':
+          schema:
+            $ref: '#components/schemas/Token'

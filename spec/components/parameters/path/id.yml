@@ -1,0 +1,8 @@
+parameter:
+  name: task_id
+  in: path
+  required: true
+  schema:
+    type: string
+    format: xid
+    example: 0123456789abcdefghij

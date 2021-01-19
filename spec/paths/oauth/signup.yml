@@ -1,0 +1,18 @@
+post:
+  tags:
+    - OAuth
+  requestBody:
+    description: New user sign up.
+    required: true
+    content:
+      'application/json':
+        schema:
+          $ref: '#components/schemas/Credential'
+
+  responses:
+    '201':
+      description: New user is successfully registered
+      content:
+        'application/json':
+          schema:
+            $ref: '#components/schemas/Token'

@@ -1,0 +1,11 @@
+{
+    "id": "https://github.com/cry999/pm-projects/spec/_schema/examples.json",
+    "type": "object",
+    "title": "openapi-example",
+    "properties": {
+        "example": {
+            "$ref": "https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/schemas/v3.0/schema.json#/definitions/Example"
+        }
+    },
+    "additionalProperties": false
+}
