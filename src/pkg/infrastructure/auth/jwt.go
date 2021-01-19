@@ -49,7 +49,7 @@ func (t *Tokenizer) Tokenize(userID string) (_ string, err error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodRS256, jwt.MapClaims{
 		// standard claims
 		"aud": "https://api.pm-projects.com/", // TODO: 外部から指定できるようにする
-		"eat": now.Add(24 * time.Hour).Unix(),
+		"exp": now.Add(24 * time.Hour).Unix(),
 		"jti": uuid.New().String(),
 		"iat": now.Unix(),
 		"iss": t.issuer,
