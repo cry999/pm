@@ -89,6 +89,6 @@ func (l *logger) print(level LoggerLevel, f string, a ...interface{}) {
 	now := time.Now().Format(time.RFC3339)
 	msg := fmt.Sprintf(f, a...)
 	lvl := fmt.Sprintf("%-5s", level)
-	log := strings.Join([]string{now, lvl, msg}, "|")
+	log := strings.Join([]string{now, lvl, l.header, msg}, "|")
 	fmt.Fprintln(os.Stderr, log)
 }

@@ -2,15 +2,16 @@ package main
 
 import (
 	"fmt"
-	"net/http"
 	"os"
 
 	"github.com/cry999/pm-projects/pkg/application/iam"
+	"github.com/cry999/pm-projects/pkg/application/task"
 	"github.com/cry999/pm-projects/pkg/infrastructure/auth"
 	"github.com/cry999/pm-projects/pkg/infrastructure/persistence"
 	"github.com/cry999/pm-projects/pkg/infrastructure/web/middleware"
 	"github.com/cry999/pm-projects/pkg/interfaces/web"
 	"github.com/cry999/pm-projects/pkg/interfaces/web/api/handlers"
+	"github.com/volatiletech/sqlboiler/v4/boil"
 )
 
 func exit(f string, a ...interface{}) {
@@ -20,6 +21,8 @@ func exit(f string, a ...interface{}) {
 }
 
 func main() {
+	boil.DebugMode = true
+
 	authenticator := auth.NewAuthenticator()
 	tokenizer, err := auth.NewTokenizer("keys/jwt-rs256.key", "keys/jwt-rs256.pub.key")
 	if err != nil {
@@ -30,6 +33,10 @@ func main() {
 	userService := iam.NewApplicationService(userRepository, authenticator)
 	userHandler := handlers.NewUserHandler(userService, tokenizer)
 
+	taskRepository := persistence.NewMySQLTaskRepository()
+	taskService := task.NewApplicationService(taskRepository)
+	taskHandler := handlers.NewTaskHandler(taskService)
+
 	server := web.NewServer()
 	defer server.Close()
 
@@ -39,17 +46,10 @@ func main() {
 	server.Route("POST", "/api/v1/oauth/signin", userHandler.Signin)
 	server.Route("POST", "/api/v1/oauth/signup", userHandler.Signup)
 
-	server.Route("GET", "/api/v1/private", func(rc *web.RequestContext) error {
-		userID, ok := rc.GetParam("authorized.user.id")
-		if !ok {
-			rc.JSONErrorResponse(fmt.Errorf("failed to get userID"))
-			return nil
-		}
-		rc.JSONResponse(http.StatusOK, map[string]string{
-			"message": fmt.Sprintf("Hello, %s", userID),
-		})
-		return nil
-	}, authRequired)
+	server.Route("GET", "/api/v1/tasks", taskHandler.ListAssociatedWithUserTasks, authRequired)
+	server.Route("POST", "/api/v1/tasks", taskHandler.CreateTask, authRequired)
+	server.Route("GET", "/api/v1/tasks/{task_id}", taskHandler.RetrieveTask, authRequired)
+	server.Route("PUT", "/api/v1/tasks/{task_id}/{action}", taskHandler.UpdateStatus, authRequired)
 
 	if err := server.Run(":8080"); err != nil {
 		exit("server.Run: error: %v", err)

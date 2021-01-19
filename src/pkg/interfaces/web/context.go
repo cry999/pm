@@ -45,6 +45,7 @@ func (rc *RequestContext) ResponseHeader() http.Header {
 
 // JSONResponse ...
 func (rc *RequestContext) JSONResponse(code int, v interface{}) {
+	rc.w.Header().Set("Content-Type", "application/json")
 	rc.w.WriteHeader(code)
 	if err := json.NewEncoder(rc.w).Encode(v); err != nil {
 		rc.Logger().Error("failed to write response: %v", err)
@@ -65,12 +66,7 @@ func (rc *RequestContext) JSONErrorResponse(err error) {
 
 // RawJSONErrorResponse ...
 func (rc *RequestContext) RawJSONErrorResponse(code int, f string, a ...interface{}) {
-	rc.w.WriteHeader(code)
-	if err := json.NewEncoder(rc.w).Encode(errorResponse{
-		Message: fmt.Sprintf(f, a...),
-	}); err != nil {
-		rc.Logger().Error("failed to write response: %v", err)
-	}
+	rc.JSONResponse(code, errorResponse{Message: fmt.Sprintf(f, a...)})
 }
 
 // JSONRequest ...
@@ -87,4 +83,17 @@ func (rc *RequestContext) SetParam(key string, val interface{}) {
 func (rc *RequestContext) GetParam(key string) (interface{}, bool) {
 	val, ok := rc.p[key]
 	return val, ok
+}
+
+// GetParamString ...
+func (rc *RequestContext) GetParamString(key string) (string, error) {
+	val, ok := rc.p[key]
+	if !ok {
+		return "", fmt.Errorf("'%s' is not set", key)
+	}
+	str, ok := val.(string)
+	if !ok {
+		return "", fmt.Errorf("'%s' is not string value: %v", key, val)
+	}
+	return str, nil
 }

@@ -18,6 +18,8 @@ func ErrorCode(err error) (code int) {
 		return http.StatusNotFound
 	case *common.NotAuthorized:
 		return http.StatusUnauthorized
+	case *common.Forbidden:
+		return http.StatusForbidden
 	case *errors.HTTPError:
 		return err.Code
 	}

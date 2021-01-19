@@ -15,7 +15,6 @@ type MySQLUserRepository struct {
 
 // NewMySQLUserRepository creates a new MySQLRepository instance
 func NewMySQLUserRepository() *MySQLUserRepository {
-	boil.DebugMode = true
 	return &MySQLUserRepository{}
 }
 

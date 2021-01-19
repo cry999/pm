@@ -2,7 +2,10 @@ package web
 
 import (
 	"net/http"
+	"reflect"
+	"runtime"
 	"sync"
+	"time"
 
 	"github.com/gorilla/mux"
 )
@@ -59,8 +62,21 @@ func (s *server) GlobalUse(middlewares ...Middleware) {
 // Route ...
 func (s *server) Route(method, path string, handler HandlerFunc, middlewares ...Middleware) {
 	middlewares = append(s.middlewares, middlewares...)
+
+	handlerName := runtime.FuncForPC(reflect.ValueOf(handler).Pointer()).Name()
+
 	s.mux.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
 		rc := NewRequestContext(w, r, NewRequestLogger(r, LoggerLevelDebug))
+		rc.Logger().Info("access from %s", r.UserAgent())
+		rc.Logger().Debug("handle by '%s'", handlerName)
+
+		start := time.Now()
+		defer rc.Logger().Debug("elapsed time: %v", time.Now().Sub(start))
+
+		for key, val := range mux.Vars(r) {
+			rc.SetParam("path."+key, val)
+		}
+
 		for i := len(middlewares) - 1; i >= 0; i-- {
 			middleware := middlewares[i]
 			handler = middleware(handler)

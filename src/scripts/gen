@@ -1,0 +1,136 @@
+#!/bin/sh
+
+VERSION=0.0.1
+PROGRAM="$0"
+
+usage() {
+    cat <<EOF
+USAGE: $PROGRAM template-name [options]
+
+template-name is below:
+    - id 
+
+options:
+    -d --dryrun: write on stdout
+    -o --outdir: output directory (default is pwd)
+EOF
+}
+
+id_usage() {
+    cat <<EOF
+USAGE: $PROGRAM id entity-name [options]
+
+args:
+    entity-name: string
+
+options:
+    -d --dryrun: write on stdout
+    -o --outdir: output directory (default is pwd)
+EOF
+}
+
+argv=""
+argc=0
+
+outdir=$(pwd)
+dryrun="false"
+
+for opt in "$@"; do
+    case $opt in
+    --version)
+        echo $VERSION
+        exit 0
+        ;;
+    -o | --outdir)
+        shift
+        if [ "$1" = "" ]; then
+            echo "output directory name is required"
+            exit 1
+        fi
+        if [ ! -d "$1" ]; then
+            echo "output must be directory"
+            exit 1
+        fi
+        outdir="$1"
+        ;;
+    -d | --dryrun)
+        dryrun=true
+        shift
+        ;;
+    --*)
+        echo "long option: $1"
+        shift
+        ;;
+    -*)
+        echo "short option: $1"
+        shift
+        ;;
+    *)
+        if [ ! -z "$1" ] && [ "$(echo $1 | grep -E '^-+')" = "" ]; then
+            argv="$argv $1"
+            echo "$((++argc))" >/dev/null
+        fi
+        shift
+        ;;
+    esac
+done
+
+arg() {
+    echo $argv | cut -d ' ' -f $1
+}
+
+title() {
+    echo $1 | awk '{ print toupper(substr($1, 1, 1)) tolower(substr($1, 2)) }'
+}
+
+lower() {
+    echo $1 | awk '{ print tolower($1) }'
+}
+
+package=$(basename $outdir)
+
+if [ $argc -lt 1 ]; then
+    echo "template-name required"
+    usage
+    exit 1
+fi
+
+template=$(echo $argv | cut -d ' ' -f 1)
+case $template in
+id)
+    if [ $argc -lt 2 ]; then
+        id_usage
+        exit 1
+    fi
+    entity=$(lower $(arg 2))
+    id="ID"
+    outbase="id"
+    if [ "$entity" != "$package" ]; then
+        id="$(title $entity)ID"
+        outbase="${entity}_id"
+    fi
+    data="{'ID':'$id','Package':'$package'}"
+    testdata="{'ID':'$id','Package':'$package'}"
+    ;;
+*)
+    echo "$template is not ready"
+    usage
+    exit 1
+    ;;
+esac
+
+TEMPLATE_DIR=$(realpath $(dirname $0)/templates)
+
+# generate entity file
+
+tempfile="${template}.go.temp"
+outfile=$([ $dryrun = "false" ] && echo "${outdir}/${outbase}.go" || echo "-")
+
+echo $data | gomplate -c .=stdin:///in.json -f "${TEMPLATE_DIR}/$tempfile" -o $outfile
+
+# generate test file
+
+tempfile="${template}_test.go.temp"
+outfile=$([ $dryrun = "false" ] && echo "${outdir}/${outbase}_test.go" || echo "-")
+
+echo $testdata | gomplate -c .=stdin:///in.json -f "${TEMPLATE_DIR}/$tempfile" -o $outfile
