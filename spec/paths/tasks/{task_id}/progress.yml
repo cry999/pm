@@ -1,4 +1,5 @@
 put:
+  operationId: progressTask
   description: Make TODO task work in progress
   tags:
     - Task

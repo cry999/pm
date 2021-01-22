@@ -1,0 +1,12 @@
+schema:
+  type: object
+  properties:
+    name:
+      type: string
+      example: Example task
+    description:
+      type: string
+      example: This task is for example
+  required:
+    - name
+    - description

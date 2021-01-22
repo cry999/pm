@@ -1,4 +1,5 @@
 put:
+  operationId: redoTask
   description: Redo the Task
   tags:
     - Task

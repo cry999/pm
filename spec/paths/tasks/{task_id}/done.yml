@@ -1,4 +1,5 @@
 put:
+  operationId: doneTask
   description: Work in progress Task is done
   tags:
     - Task

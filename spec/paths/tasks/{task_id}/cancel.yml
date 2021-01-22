@@ -1,4 +1,5 @@
 put:
+  operationId: cancelTask
   description: The Task is not done for the time being
   tags:
     - Task

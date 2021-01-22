@@ -1,0 +1,7 @@
+FROM node:15.5.1-alpine3.10
+
+WORKDIR /workdir
+
+RUN npm install -g @apidevtools/swagger-cli
+
+ENTRYPOINT [ "swagger-cli" ]

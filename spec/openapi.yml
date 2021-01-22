@@ -41,6 +41,10 @@ components:
       $ref: ./components/schemas/token.yml#/schema
     Task:
       $ref: ./components/schemas/task.yml#/schema
+    TaskList:
+      $ref: ./components/schemas/task_list.yml#/schema
+    TaskForm:
+      $ref: ./components/schemas/task_form.yml#/schema
   securitySchemes:
     $ref: ./components/security/bearer.yml
   examples:

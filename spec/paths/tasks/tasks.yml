@@ -1,4 +1,5 @@
 get:
+  operationId: listAllAssociatedWithUser
   tags:
     - Task
   description: List all tasks associated with authenticated user.
@@ -10,9 +11,10 @@ get:
       content:
         'application/json':
           schema:
-            $ref: '#components/schemas/Task'
+            $ref: '#components/schemas/TaskList'
 
 post:
+  operationId: createTask
   tags:
     - Task
   description: Create a new task
@@ -23,17 +25,7 @@ post:
     content:
       'application/json':
         schema:
-          type: object
-          properties:
-            name:
-              type: string
-              example: Example task
-            description:
-              type: string
-              example: This task is for example
-          required:
-            - name
-            - description
+          $ref: '#components/schemas/TaskForm'
   responses:
     '201':
       description: New task is successfully created

@@ -1,4 +1,5 @@
 put:
+  operationId: putOnHoldTask
   description: The Task will be put on hold for a while.
   tags:
     - Task
