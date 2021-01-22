@@ -27,7 +27,6 @@ func Transaction(next web.HandlerFunc) web.HandlerFunc {
 		}
 		defer func() {
 			if err != nil {
-				rc.JSONErrorResponse(errors.HTTPErrorf(http.StatusBadGateway, "Bad Gateway"))
 				rc.Logger().Error("rollback because: %v", err)
 				tx.Rollback()
 			} else {

@@ -49,7 +49,8 @@ func main() {
 	server.Route("GET", "/api/v1/tasks", taskHandler.ListAssociatedWithUserTasks, authRequired)
 	server.Route("POST", "/api/v1/tasks", taskHandler.CreateTask, authRequired)
 	server.Route("GET", "/api/v1/tasks/{task_id}", taskHandler.RetrieveTask, authRequired)
-	server.Route("PUT", "/api/v1/tasks/{task_id}/{action}", taskHandler.UpdateStatus, authRequired)
+	server.Route("PUT", "/api/v1/tasks/{task_id}/{action:progress|done|redo|cancel|hold}", taskHandler.UpdateStatus, authRequired)
+	server.Route("PUT", "/api/v1/tasks/{task_id}/assign", taskHandler.AssignSignedInUserToTask, authRequired)
 
 	if err := server.Run(":8080"); err != nil {
 		exit("server.Run: error: %v", err)

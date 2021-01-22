@@ -1,0 +1,16 @@
+put:
+  operationId: assignSignedInUserToTask
+  description: assign the signed in user to the task
+  tags:
+    - Task
+  security:
+    - bearer: []
+  parameters:
+    - $ref: '#components/parameters/TaskID'
+  responses:
+    '200':
+      description: OK
+      content:
+        'application/json':
+          schema:
+            $ref: '#components/schemas/Task'

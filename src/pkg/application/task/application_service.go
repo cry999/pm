@@ -14,6 +14,7 @@ type ApplicationService interface {
 	RetrieveTask(context.Context, commands.RetrieveTaskInput) (*commands.RetrieveTaskOutput, error)
 	UpdateStatus(context.Context, commands.UpdateStatusInput) (*commands.UpdateStatusOutput, error)
 	GetAssociatedWithUserTasks(context.Context, commands.GetAssociatedWithUserTasksInput) (*commands.GetAssociatedWithUserTasksOutput, error)
+	AssignUserToTask(context.Context, commands.AssignUserToTaskInput) (*commands.AssignUserToTaskOutput, error)
 }
 
 type service struct {
@@ -131,4 +132,28 @@ func (s *service) GetAssociatedWithUserTasks(ctx context.Context, input commands
 		out.Results = append(out.Results, commands.NewTaskDescriptor(task))
 	}
 	return
+}
+
+func (s *service) AssignUserToTask(ctx context.Context, input commands.AssignUserToTaskInput) (output *commands.AssignUserToTaskOutput, err error) {
+	assigneeID, err := domain.NewUserID(input.AssigneeID)
+	if err != nil {
+		return
+	}
+	taskID, err := domain.NewID(input.TaskID)
+	if err != nil {
+		return
+	}
+	task, err := s.repository.Find(ctx, taskID)
+	if err != nil {
+		return
+	}
+	if err = task.Assign(assigneeID); err != nil {
+		return
+	}
+	if err = s.repository.Save(ctx, task); err != nil {
+		return
+	}
+	return &commands.AssignUserToTaskOutput{
+		TaskDescriptor: commands.NewTaskDescriptor(task),
+	}, nil
 }

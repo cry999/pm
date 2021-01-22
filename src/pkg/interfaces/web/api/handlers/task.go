@@ -131,8 +131,8 @@ func (h *TaskHandler) UpdateStatus(rc *web.RequestContext) (err error) {
 func (h *TaskHandler) ListAssociatedWithUserTasks(rc *web.RequestContext) (err error) {
 	userID, err := rc.GetParamString("authorized.user.id")
 	if err != nil {
-		err = errors.HTTPErrorf(http.StatusUnauthorized, "not authorized")
 		rc.JSONErrorResponse(err)
+		err = errors.HTTPErrorf(http.StatusUnauthorized, "not authorized")
 		rc.Logger().Error("cannot get authorized user id: %v", err)
 		return
 	}
@@ -141,6 +141,35 @@ func (h *TaskHandler) ListAssociatedWithUserTasks(rc *web.RequestContext) (err e
 		UserID: userID,
 	}
 	output, err := h.service.GetAssociatedWithUserTasks(rc.Context(), input)
+	if err != nil {
+		rc.JSONErrorResponse(err)
+		return
+	}
+	rc.JSONResponse(http.StatusOK, output)
+	return
+}
+
+// AssignSignedInUserToTask ...
+func (h *TaskHandler) AssignSignedInUserToTask(rc *web.RequestContext) (err error) {
+	userID, err := rc.GetParamString("authorized.user.id")
+	if err != nil {
+		rc.JSONErrorResponse(err)
+		err = errors.HTTPErrorf(http.StatusUnauthorized, "not authorized")
+		rc.Logger().Error("cannot get authorized user id: %v", err)
+		return
+	}
+	taskID, err := rc.GetParamString("path.task_id")
+	if err != nil {
+		rc.JSONErrorResponse(err)
+		err = errors.HTTPErrorf(http.StatusUnauthorized, "not authorized")
+		rc.Logger().Error("cannot get authorized user id: %v", err)
+		return
+	}
+	input := commands.AssignUserToTaskInput{
+		AssigneeID: userID,
+		TaskID:     taskID,
+	}
+	output, err := h.service.AssignUserToTask(rc.Context(), input)
 	if err != nil {
 		rc.JSONErrorResponse(err)
 		return
