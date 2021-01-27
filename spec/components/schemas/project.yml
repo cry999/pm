@@ -1,0 +1,28 @@
+schema:
+  type: object
+  properties:
+    id:
+      type: string
+      example: 0123456789abcdefghij
+    owner_id:
+      type: string
+      example: 0123456789abcdefghij
+    name:
+      type: string
+      example: Example Project
+    elevator_pitch:
+      type: string
+      example: This project is example project
+    tasks:
+      type: array
+      items:
+        $ref: '#components/schemas/Task'
+    created_at:
+      type: string
+      format: date-time
+    updated_at:
+      type: string
+      format: date-time
+  required:
+    - name
+    - elevator_pitch

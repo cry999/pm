@@ -110,6 +110,7 @@ func (r *MySQLTaskRepository) Serialize(task *domain.Task) *models.Task {
 		Description: task.Description,
 		OwnerID:     nilIfEmpty(task.OwnerID.String()),
 		AssigneeID:  nilIfEmpty(task.AssigneeID.String()),
+		ProjectID:   nilIfEmpty(task.ProjectID.String()),
 		Status:      string(task.Status),
 		Deadline:    null.TimeFromPtr(task.Deadline),
 		CreatedAt:   task.CreatedAt,
@@ -126,6 +127,7 @@ func (r *MySQLTaskRepository) Deserialize(taskInDB *models.Task) (_ *domain.Task
 	var (
 		ownerID    = domain.UserIDZero
 		assigneeID = domain.UserIDZero
+		projectID  = domain.ProjectIDZero
 	)
 	if taskInDB.OwnerID.Valid {
 		ownerID, err = domain.NewUserID(taskInDB.OwnerID.String)
@@ -139,12 +141,19 @@ func (r *MySQLTaskRepository) Deserialize(taskInDB *models.Task) (_ *domain.Task
 			return
 		}
 	}
+	if taskInDB.ProjectID.Valid {
+		projectID, err = domain.NewProjectID(taskInDB.ProjectID.String)
+		if err != nil {
+			return
+		}
+	}
 	return &domain.Task{
 		ID:          taskID,
 		Name:        taskInDB.Name,
 		Description: taskInDB.Description,
 		OwnerID:     ownerID,
 		AssigneeID:  assigneeID,
+		ProjectID:   projectID,
 		Status:      domain.Status(taskInDB.Status),
 		Deadline:    taskInDB.Deadline.Ptr(),
 		CreatedAt:   taskInDB.CreatedAt,

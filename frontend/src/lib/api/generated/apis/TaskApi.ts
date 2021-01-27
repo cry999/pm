@@ -26,6 +26,10 @@ import {
     TaskListToJSON,
 } from '../models';
 
+export interface AssignSignedInUserToTaskRequest {
+    taskId: string;
+}
+
 export interface CancelTaskRequest {
     taskId: string;
 }
@@ -58,6 +62,44 @@ export interface RedoTaskRequest {
  * 
  */
 export class TaskApi extends runtime.BaseAPI {
+
+    /**
+     * assign the signed in user to the task
+     */
+    async assignSignedInUserToTaskRaw(requestParameters: AssignSignedInUserToTaskRequest): Promise<runtime.ApiResponse<Task>> {
+        if (requestParameters.taskId === null || requestParameters.taskId === undefined) {
+            throw new runtime.RequiredError('taskId','Required parameter requestParameters.taskId was null or undefined when calling assignSignedInUserToTask.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = typeof token === 'function' ? token("bearer", []) : token;
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+        const response = await this.request({
+            path: `/tasks/{task_id}/assign`.replace(`{${"task_id"}}`, encodeURIComponent(String(requestParameters.taskId))),
+            method: 'PUT',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => TaskFromJSON(jsonValue));
+    }
+
+    /**
+     * assign the signed in user to the task
+     */
+    async assignSignedInUserToTask(requestParameters: AssignSignedInUserToTaskRequest): Promise<Task> {
+        const response = await this.assignSignedInUserToTaskRaw(requestParameters);
+        return await response.value();
+    }
 
     /**
      * The Task is not done for the time being

@@ -5,18 +5,20 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+
+	"github.com/cry999/pm-projects/pkg/interfaces/logger"
 )
 
 // RequestContext ...
 type RequestContext struct {
 	w http.ResponseWriter
 	r *http.Request
-	l Logger
+	l logger.Logger
 	p map[string]interface{}
 }
 
 // NewRequestContext creates a new RequestContext instance
-func NewRequestContext(w http.ResponseWriter, r *http.Request, l Logger) *RequestContext {
+func NewRequestContext(w http.ResponseWriter, r *http.Request, l logger.Logger) *RequestContext {
 	return &RequestContext{
 		w: w,
 		r: r,
@@ -26,7 +28,7 @@ func NewRequestContext(w http.ResponseWriter, r *http.Request, l Logger) *Reques
 }
 
 // Logger ...
-func (rc *RequestContext) Logger() Logger { return rc.l }
+func (rc *RequestContext) Logger() logger.Logger { return rc.l }
 
 // Context ...
 func (rc *RequestContext) Context() context.Context { return rc.r.Context() }
@@ -96,7 +98,7 @@ func (rc *RequestContext) GetParam(key string) (interface{}, bool) {
 
 // GetParamString ...
 func (rc *RequestContext) GetParamString(key string) (string, error) {
-	val, ok := rc.p[key]
+	val, ok := rc.GetParam(key)
 	if !ok {
 		return "", fmt.Errorf("'%s' is not set", key)
 	}

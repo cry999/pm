@@ -1,9 +1,12 @@
 package task
 
 import (
+	"context"
 	"time"
 
 	"github.com/cry999/pm-projects/pkg/domain/errors/common"
+	"github.com/cry999/pm-projects/pkg/domain/event"
+	taskEvent "github.com/cry999/pm-projects/pkg/domain/event/task"
 )
 
 // Task ...
@@ -12,6 +15,7 @@ type Task struct {
 	Name        string
 	Description string
 	OwnerID     UserID
+	ProjectID   ProjectID
 	AssigneeID  UserID
 	Status      Status
 	Deadline    *time.Time
@@ -19,28 +23,53 @@ type Task struct {
 	UpdatedAt   time.Time
 }
 
-// NewTask creates a new Task instance
-func NewTask(id ID, name, description string, ownerID UserID) (_ *Task, err error) {
+// New creates a new Task instance
+func New(id ID, name, description string, ownerID UserID) (_ *Task, err error) {
 	t := new(Task)
-	if err = t.SetID(id); err != nil {
+	if err = t.setID(id); err != nil {
 		return
 	}
-	if err = t.SetName(name); err != nil {
+	if err = t.setName(name); err != nil {
 		return
 	}
-	if err = t.SetDescription(description); err != nil {
+	if err = t.setDescription(description); err != nil {
 		return
 	}
-	if err = t.SetOwnerID(ownerID); err != nil {
+	if err = t.setOwnerID(ownerID); err != nil {
 		return
 	}
 	t.AssigneeID = UserIDZero
 	t.Status = StatusTodo
+
 	return t, nil
 }
 
-// SetID ...
-func (t *Task) SetID(id ID) error {
+// PlanForProject ...
+func PlanForProject(id ID, name, description string, ownerID UserID, projectID ProjectID) (_ *Task, err error) {
+	t, err := New(id, name, description, ownerID)
+	if err != nil {
+		return
+	}
+	if err = t.SetProjectID(projectID); err != nil {
+		return
+	}
+	event.Get().Publish(context.Background(), taskEvent.Planned{
+		ID:          t.ID.String(),
+		Name:        t.Name,
+		Description: t.Description,
+		OwnerID:     t.OwnerID.String(),
+		ProjectID:   t.ProjectID.String(),
+		AssigneeID:  t.AssigneeID.String(),
+		Status:      string(t.Status),
+		Deadline:    t.Deadline,
+		CreatedAt:   t.CreatedAt,
+		UpdatedAt:   t.UpdatedAt,
+	})
+	return t, nil
+}
+
+// setID ...
+func (t *Task) setID(id ID) error {
 	if id.Equals(IDZero) {
 		return common.InvalidArgumentError("id", "zero")
 	}
@@ -51,8 +80,8 @@ func (t *Task) SetID(id ID) error {
 	return nil
 }
 
-// SetName ...
-func (t *Task) SetName(name string) error {
+// setName ...
+func (t *Task) setName(name string) error {
 	if name == "" {
 		return common.InvalidArgumentError("name", "empty")
 	}
@@ -60,8 +89,8 @@ func (t *Task) SetName(name string) error {
 	return nil
 }
 
-// SetDescription ...
-func (t *Task) SetDescription(description string) error {
+// setDescription ...
+func (t *Task) setDescription(description string) error {
 	if description == "" {
 		return common.InvalidArgumentError("description", "empty")
 	}
@@ -69,8 +98,8 @@ func (t *Task) SetDescription(description string) error {
 	return nil
 }
 
-// SetOwnerID ...
-func (t *Task) SetOwnerID(ownerID UserID) error {
+// setOwnerID ...
+func (t *Task) setOwnerID(ownerID UserID) error {
 	if ownerID.Equals(UserIDZero) {
 		return common.InvalidArgumentError("owner_id", "zero")
 	}
@@ -78,6 +107,15 @@ func (t *Task) SetOwnerID(ownerID UserID) error {
 		return common.IllegalOperationError("owner_id is already set")
 	}
 	t.OwnerID = ownerID
+	return nil
+}
+
+// SetProjectID ...
+func (t *Task) SetProjectID(projectID ProjectID) error {
+	if !ProjectIDZero.Equals(t.ProjectID) {
+		return common.IllegalOperationError("this task already belongs to the project")
+	}
+	t.ProjectID = projectID
 	return nil
 }
 

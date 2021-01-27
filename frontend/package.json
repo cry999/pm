@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "gencli": "../spec/build.sh && openapi-generator-cli generate -g typescript-fetch -i ../spec/out/openapi.yml -o ./generated/api"
+    "gencli": "../spec/build.sh && openapi-generator-cli generate -g typescript-fetch -i ../spec/out/openapi.yml -o ./src/lib/api/generated/"
   },
   "dependencies": {
     "@material-ui/core": "^4.11.2",

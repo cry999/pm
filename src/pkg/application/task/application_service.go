@@ -37,7 +37,7 @@ func (s *service) CreateTask(ctx context.Context, input commands.CreateTaskInput
 	if err != nil {
 		return
 	}
-	task, err := domain.NewTask(taskID, input.Name, input.Description, ownerID)
+	task, err := domain.New(taskID, input.Name, input.Description, ownerID)
 	if err != nil {
 		return
 	}

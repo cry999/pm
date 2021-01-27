@@ -1,0 +1,22 @@
+post:
+  operationId: createProjectTask
+  tags:
+    - Project
+  description: Create a new task on project
+  security:
+    - bearer: []
+  parameters:
+    - $ref: '#components/parameters/ProjectID'
+  requestBody:
+    required: true
+    content:
+      'application/json':
+        schema:
+          $ref: '#components/schemas/TaskForm'
+  responses:
+    '201':
+      description: OK
+      content:
+        'application/json':
+          schema:
+            $ref: '#components/schemas/Task'

@@ -1,0 +1,32 @@
+get:
+  operationId: listProjectsRelatedWithUser
+  tags:
+    - 'Project'
+  security:
+    - bearer: []
+  responses:
+    '200':
+      description: OK
+      content:
+        'application/json':
+          schema:
+            $ref: '#components/schemas/ProjectList'
+
+post:
+  operationId: createProject
+  tags:
+    - 'Project'
+  security:
+    - bearer: []
+  requestBody:
+    content:
+      'application/json':
+        schema:
+          $ref: '#components/schemas/ProjectForm'
+  responses:
+    '200':
+      description: OK
+      content:
+        'application/json':
+          schema:
+            $ref: '#components/schemas/Project'

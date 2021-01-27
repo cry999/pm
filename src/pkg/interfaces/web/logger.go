@@ -6,83 +6,50 @@ import (
 	"os"
 	"strings"
 	"time"
+
+	"github.com/cry999/pm-projects/pkg/interfaces/logger"
 )
 
 type (
-	// Logger ...
-	Logger interface {
-		Debug(f string, a ...interface{})
-		Info(f string, a ...interface{})
-		Warn(f string, a ...interface{})
-		Error(f string, a ...interface{})
-	}
-	logger struct {
-		level  LoggerLevel
+	impl struct {
+		level  logger.Level
 		header string
 	}
-	// LoggerLevel should be printed out
-	LoggerLevel int
 )
-
-// LoggerLevel constant variables
-const (
-	LoggerLevelDebug LoggerLevel = iota
-	LoggerLevelInfo
-	LoggerLevelWarn
-	LoggerLevelError
-)
-
-// String ...
-func (ll LoggerLevel) String() string {
-	switch ll {
-	case LoggerLevelDebug:
-		return "DEBUG"
-	case LoggerLevelInfo:
-		return "INFO"
-	case LoggerLevelWarn:
-		return "WARN"
-	case LoggerLevelError:
-		return "ERROR"
-	}
-	if ll < LoggerLevelDebug {
-		return "DEBUG"
-	}
-	return "ERROR"
-}
 
 // NewRequestLogger ...
-func NewRequestLogger(r *http.Request, level LoggerLevel) Logger {
-	return &logger{
+func NewRequestLogger(r *http.Request, level logger.Level) logger.Logger {
+	return &impl{
 		level:  level,
 		header: strings.Join([]string{r.Method, r.URL.Path}, "|"),
 	}
 }
 
 // NewDefaultLogger ...
-func NewDefaultLogger(level LoggerLevel) Logger {
-	return &logger{
+func NewDefaultLogger(level logger.Level) logger.Logger {
+	return &impl{
 		level:  level,
 		header: "(default-logger)",
 	}
 }
 
-func (l *logger) Debug(f string, a ...interface{}) {
-	l.print(LoggerLevelDebug, f, a...)
+func (l *impl) Debug(f string, a ...interface{}) {
+	l.print(logger.LoggerLevelDebug, f, a...)
 }
 
-func (l *logger) Info(f string, a ...interface{}) {
-	l.print(LoggerLevelInfo, f, a...)
+func (l *impl) Info(f string, a ...interface{}) {
+	l.print(logger.LoggerLevelInfo, f, a...)
 }
 
-func (l *logger) Warn(f string, a ...interface{}) {
-	l.print(LoggerLevelWarn, f, a...)
+func (l *impl) Warn(f string, a ...interface{}) {
+	l.print(logger.LoggerLevelWarn, f, a...)
 }
 
-func (l *logger) Error(f string, a ...interface{}) {
-	l.print(LoggerLevelError, f, a...)
+func (l *impl) Error(f string, a ...interface{}) {
+	l.print(logger.LoggerLevelError, f, a...)
 }
 
-func (l *logger) print(level LoggerLevel, f string, a ...interface{}) {
+func (l *impl) print(level logger.Level, f string, a ...interface{}) {
 	if l.level > level {
 		return
 	}

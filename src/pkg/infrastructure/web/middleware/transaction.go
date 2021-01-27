@@ -1,5 +1,7 @@
 package middleware
 
+// TODO: persistence に移すべき?
+
 import (
 	"net/http"
 

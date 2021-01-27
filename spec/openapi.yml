@@ -34,6 +34,15 @@ paths:
     $ref: ./paths/tasks/{task_id}/cancel.yml
   /tasks/{task_id}/hold:
     $ref: ./paths/tasks/{task_id}/hold.yml
+  #
+  # Project
+  #
+  /projects:
+    $ref: ./paths/projects/index.yml
+  /projects/{project_id}:
+    $ref: ./paths/projects/{project_id}/index.yml
+  /projects/{project_id}/tasks:
+    $ref: ./paths/projects/{project_id}/tasks.yml
 
 components:
   schemas:
@@ -47,6 +56,12 @@ components:
       $ref: ./components/schemas/task_list.yml#/schema
     TaskForm:
       $ref: ./components/schemas/task_form.yml#/schema
+    Project:
+      $ref: ./components/schemas/project.yml#/schema
+    ProjectList:
+      $ref: ./components/schemas/project_list.yml#/schema
+    ProjectForm:
+      $ref: ./components/schemas/project_form.yml#/schema
   securitySchemes:
     $ref: ./components/security/bearer.yml
   examples:
@@ -54,4 +69,6 @@ components:
       $ref: ./components/examples/xid.yml#/example
   parameters:
     TaskID:
-      $ref: ./components/parameters/path/id.yml#/parameter
+      $ref: ./components/parameters/path/task_id.yml#/parameter
+    ProjectID:
+      $ref: ./components/parameters/path/project_id.yml#/parameter

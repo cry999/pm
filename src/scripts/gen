@@ -3,6 +3,8 @@
 VERSION=0.0.1
 PROGRAM="$0"
 
+SED=sed
+
 usage() {
     cat <<EOF
 USAGE: $PROGRAM template-name [options]
@@ -87,6 +89,14 @@ lower() {
     echo $1 | awk '{ print tolower($1) }'
 }
 
+snake() {
+    echo $1 | $SED -E 's/(.)([A-Z])/\1_\2/g' | tr '[A-Z]' '[a-z]'
+}
+
+pascal() {
+    echo $1 | awk -F '_' '{ for(i=1; i<=NF; i++) {printf toupper(substr($i,1,1)) substr($i,2)}} END {print ""}'
+}
+
 package=$(basename $outdir)
 
 if [ $argc -lt 1 ]; then
@@ -102,11 +112,11 @@ id)
         id_usage
         exit 1
     fi
-    entity=$(lower $(arg 2))
+    entity=$(snake $(arg 2))
     id="ID"
     outbase="id"
     if [ "$entity" != "$package" ]; then
-        id="$(title $entity)ID"
+        id="$(pascal $entity)ID"
         outbase="${entity}_id"
     fi
     data="{'ID':'$id','Package':'$package'}"

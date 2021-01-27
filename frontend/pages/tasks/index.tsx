@@ -1,30 +1,20 @@
 import { NextPage } from 'next';
-import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 
 import {
-  Avatar,
-  Button,
   Card,
-  CardActions,
-  CardContent,
-  CardHeader,
   createStyles,
   Grid,
   IconButton,
   makeStyles,
   Typography,
 } from '@material-ui/core';
-import AddIcon from '@material-ui/icons/Add';
 import CachedTwoToneIcon from '@material-ui/icons/CachedTwoTone';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
 
 import NewTaskDialog, { NewTaskForm } from '../../src/components/organisms/NewTaskDialog';
-import StatusSteps from '../../src/components/organisms/StatusStep';
+import TaskList from '../../src/components/organisms/TaskList';
 import AuthPage from '../../src/components/templates/AuthPage';
-import { facade, TaskApi } from '../../src/lib/api';
-import { abbrev } from '../../src/lib/text';
-import { datediff } from '../../src/lib/time';
+import { TaskApi, useFacade } from '../../src/lib/api';
 import { KeyType, ResultsItemType } from '../../src/lib/type';
 
 const useStyles = makeStyles((theme) =>
@@ -32,8 +22,8 @@ const useStyles = makeStyles((theme) =>
     reloadIcon: {
       width: 50,
       height: 50,
-      float: 'right',
       margin: theme.spacing(1),
+      float: 'right',
     },
     title: {
       textAlign: 'center',
@@ -44,19 +34,11 @@ const useStyles = makeStyles((theme) =>
       padding: theme.spacing(2),
     },
     card: {
-      height: theme.spacing(45),
-      width: theme.spacing(35),
       margin: theme.spacing(2),
     },
-    cardHeader: {
-      height: theme.spacing(14),
-    },
-    cardContent: {
-      height: theme.spacing(12),
-    },
-    cardStatus: {
-      height: theme.spacing(11),
-    },
+    cardHeader: {},
+    cardContent: {},
+    cardStatus: {},
   })
 );
 
@@ -64,12 +46,9 @@ type P = {};
 
 type Task = ResultsItemType<KeyType<TaskApi, 'listAllAssociatedWithUser'>>;
 
-const MAX_CONTENT = 100;
-const MAX_TITLE = 30;
-
 const TaskDashboard: NextPage<P> = ({}) => {
   const classNames = useStyles();
-  const api = facade(TaskApi);
+  const api = useFacade(TaskApi);
   const [tasks, setTasks] = useState<Task[]>([]);
 
   const load = async () => {
@@ -119,8 +98,16 @@ const TaskDashboard: NextPage<P> = ({}) => {
   const handleCreate = async ({ name, description }: NewTaskForm) => {
     try {
       await api.createTask({ taskForm: { name, description } });
-      const { results } = await api.listAllAssociatedWithUser();
-      setTasks(results);
+      await load();
+    } catch (e) {
+      alert(e);
+    }
+  };
+
+  const handleAssign = async (taskId: string) => {
+    try {
+      await api.assignSignedInUserToTask({ taskId });
+      await load();
     } catch (e) {
       alert(e);
     }
@@ -129,12 +116,12 @@ const TaskDashboard: NextPage<P> = ({}) => {
   return (
     <AuthPage
       title={
-        <Grid item>
+        <Grid item xs={12}>
           <Typography variant="h3" className={classNames.title}>
             Task Dashboard
           </Typography>
-          <IconButton className={classNames.reloadIcon}>
-            <CachedTwoToneIcon onClick={handleReload} />
+          <IconButton className={classNames.reloadIcon} onClick={handleReload}>
+            <CachedTwoToneIcon />
           </IconButton>
         </Grid>
       }
@@ -147,44 +134,11 @@ const TaskDashboard: NextPage<P> = ({}) => {
           <NewTaskDialog onCreate={handleCreate} />
         </Card>
       </Grid>
-      {tasks.map((t) => (
-        <Grid item key={t.id}>
-          <Card className={classNames.card} variant="outlined">
-            <CardHeader
-              avatar={
-                t.assigneeId ? (
-                  <Avatar aria-label="task">{t.assigneeId.substr(0, 6)}</Avatar>
-                ) : (
-                  <Button>
-                    <Avatar aria-label="task">Do!</Avatar>
-                  </Button>
-                )
-              }
-              action={
-                <IconButton aria-label="settings">
-                  <MoreVertIcon />
-                </IconButton>
-              }
-              title={abbrev(t.name, MAX_TITLE)}
-              subheader={
-                'last updated at ' + datediff(new Date(), t.updatedAt) + ' ago'
-              }
-              className={classNames.cardHeader}
-            />
-            <CardContent className={classNames.cardContent}>
-              <Typography variant="body2" color="textSecondary" component="p">
-                {abbrev(t.description, MAX_CONTENT)}
-              </Typography>
-            </CardContent>
-            <CardActions className={classNames.cardStatus}>
-              <StatusSteps
-                status={t.status}
-                onCompleteStep={(step) => handleCompletedStep(t.id, step)}
-              />
-            </CardActions>
-          </Card>
-        </Grid>
-      ))}
+      <TaskList
+        tasks={tasks}
+        onAssign={handleAssign}
+        onStepCompleted={handleCompletedStep}
+      />
     </AuthPage>
   );
 };

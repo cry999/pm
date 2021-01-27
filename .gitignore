@@ -1,3 +1,4 @@
 air/
 docker/mysql/data/*
 pkg/infrastructure/persistence/models
+DONE

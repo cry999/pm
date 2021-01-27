@@ -7,6 +7,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/cry999/pm-projects/pkg/interfaces/logger"
 	"github.com/gorilla/mux"
 )
 
@@ -28,11 +29,11 @@ type (
 	server struct {
 		mux         *mux.Router
 		middlewares []Middleware
-		logger      Logger
+		logger      logger.Logger
 	}
 
 	// ShutdownFunc は server が Close される時に実行されるべき関数
-	ShutdownFunc func(Logger)
+	ShutdownFunc func(logger.Logger)
 )
 
 var (
@@ -50,7 +51,7 @@ func NewServer() Server {
 	return &server{
 		mux:         mux.NewRouter(),
 		middlewares: []Middleware{},
-		logger:      NewDefaultLogger(LoggerLevelDebug),
+		logger:      NewDefaultLogger(logger.LoggerLevelDebug),
 	}
 }
 
@@ -67,7 +68,7 @@ func (s *server) Route(method, path string, handler HandlerFunc, middlewares ...
 	handlerName := runtime.FuncForPC(reflect.ValueOf(handler).Pointer()).Name()
 
 	s.mux.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
-		rc := NewRequestContext(w, r, NewRequestLogger(r, LoggerLevelDebug))
+		rc := NewRequestContext(w, r, NewRequestLogger(r, logger.LoggerLevelDebug))
 		rc.Logger().Info("access from %s", r.UserAgent())
 		rc.Logger().Debug("handle by '%s'", handlerName)
 

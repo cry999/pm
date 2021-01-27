@@ -29,6 +29,7 @@ type Task struct {
 	Description string      `boil:"description" json:"description" toml:"description" yaml:"description"`
 	OwnerID     null.String `boil:"owner_id" json:"owner_id,omitempty" toml:"owner_id" yaml:"owner_id,omitempty"`
 	AssigneeID  null.String `boil:"assignee_id" json:"assignee_id,omitempty" toml:"assignee_id" yaml:"assignee_id,omitempty"`
+	ProjectID   null.String `boil:"project_id" json:"project_id,omitempty" toml:"project_id" yaml:"project_id,omitempty"`
 	Status      string      `boil:"status" json:"status" toml:"status" yaml:"status"`
 	Deadline    null.Time   `boil:"deadline" json:"deadline,omitempty" toml:"deadline" yaml:"deadline,omitempty"`
 	CreatedAt   time.Time   `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
@@ -44,6 +45,7 @@ var TaskColumns = struct {
 	Description string
 	OwnerID     string
 	AssigneeID  string
+	ProjectID   string
 	Status      string
 	Deadline    string
 	CreatedAt   string
@@ -54,6 +56,7 @@ var TaskColumns = struct {
 	Description: "description",
 	OwnerID:     "owner_id",
 	AssigneeID:  "assignee_id",
+	ProjectID:   "project_id",
 	Status:      "status",
 	Deadline:    "deadline",
 	CreatedAt:   "created_at",
@@ -61,29 +64,6 @@ var TaskColumns = struct {
 }
 
 // Generated where
-
-type whereHelperstring struct{ field string }
-
-func (w whereHelperstring) EQ(x string) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.EQ, x) }
-func (w whereHelperstring) NEQ(x string) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.NEQ, x) }
-func (w whereHelperstring) LT(x string) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.LT, x) }
-func (w whereHelperstring) LTE(x string) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.LTE, x) }
-func (w whereHelperstring) GT(x string) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.GT, x) }
-func (w whereHelperstring) GTE(x string) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.GTE, x) }
-func (w whereHelperstring) IN(slice []string) qm.QueryMod {
-	values := make([]interface{}, 0, len(slice))
-	for _, value := range slice {
-		values = append(values, value)
-	}
-	return qm.WhereIn(fmt.Sprintf("%s IN ?", w.field), values...)
-}
-func (w whereHelperstring) NIN(slice []string) qm.QueryMod {
-	values := make([]interface{}, 0, len(slice))
-	for _, value := range slice {
-		values = append(values, value)
-	}
-	return qm.WhereNotIn(fmt.Sprintf("%s NOT IN ?", w.field), values...)
-}
 
 type whereHelpernull_String struct{ field string }
 
@@ -131,33 +111,13 @@ func (w whereHelpernull_Time) GTE(x null.Time) qm.QueryMod {
 	return qmhelper.Where(w.field, qmhelper.GTE, x)
 }
 
-type whereHelpertime_Time struct{ field string }
-
-func (w whereHelpertime_Time) EQ(x time.Time) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.EQ, x)
-}
-func (w whereHelpertime_Time) NEQ(x time.Time) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.NEQ, x)
-}
-func (w whereHelpertime_Time) LT(x time.Time) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.LT, x)
-}
-func (w whereHelpertime_Time) LTE(x time.Time) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.LTE, x)
-}
-func (w whereHelpertime_Time) GT(x time.Time) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.GT, x)
-}
-func (w whereHelpertime_Time) GTE(x time.Time) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.GTE, x)
-}
-
 var TaskWhere = struct {
 	ID          whereHelperstring
 	Name        whereHelperstring
 	Description whereHelperstring
 	OwnerID     whereHelpernull_String
 	AssigneeID  whereHelpernull_String
+	ProjectID   whereHelpernull_String
 	Status      whereHelperstring
 	Deadline    whereHelpernull_Time
 	CreatedAt   whereHelpertime_Time
@@ -168,6 +128,7 @@ var TaskWhere = struct {
 	Description: whereHelperstring{field: "`tasks`.`description`"},
 	OwnerID:     whereHelpernull_String{field: "`tasks`.`owner_id`"},
 	AssigneeID:  whereHelpernull_String{field: "`tasks`.`assignee_id`"},
+	ProjectID:   whereHelpernull_String{field: "`tasks`.`project_id`"},
 	Status:      whereHelperstring{field: "`tasks`.`status`"},
 	Deadline:    whereHelpernull_Time{field: "`tasks`.`deadline`"},
 	CreatedAt:   whereHelpertime_Time{field: "`tasks`.`created_at`"},
@@ -191,8 +152,8 @@ func (*taskR) NewStruct() *taskR {
 type taskL struct{}
 
 var (
-	taskAllColumns            = []string{"id", "name", "description", "owner_id", "assignee_id", "status", "deadline", "created_at", "updated_at"}
-	taskColumnsWithoutDefault = []string{"id", "name", "description", "owner_id", "assignee_id", "status", "deadline"}
+	taskAllColumns            = []string{"id", "name", "description", "owner_id", "assignee_id", "project_id", "status", "deadline", "created_at", "updated_at"}
+	taskColumnsWithoutDefault = []string{"id", "name", "description", "owner_id", "assignee_id", "project_id", "status", "deadline"}
 	taskColumnsWithDefault    = []string{"created_at", "updated_at"}
 	taskPrimaryKeyColumns     = []string{"id"}
 )
