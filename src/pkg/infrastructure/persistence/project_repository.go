@@ -51,10 +51,9 @@ func (r *MySQLProjectRepository) Save(ctx context.Context, prj *project.Project)
 
 	// * For simple, at first all plannedProjectTasks are deleted,
 	// * and then current all plannedProjectTasks are inserted
-	if err = projectInDB.R.PlannedProjectTasks.ReloadAll(ctx, tx); err != nil {
-		return
-	}
-	if _, err = projectInDB.R.PlannedProjectTasks.DeleteAll(ctx, tx); err != nil {
+	if _, err = models.PlannedProjectTasks(
+		models.PlannedProjectTaskWhere.ProjectID.EQ(prj.ID.String()),
+	).DeleteAll(ctx, tx); err != nil {
 		return
 	}
 	for _, plannedTaskID := range prj.PlannedTasks {
