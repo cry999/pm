@@ -92,7 +92,10 @@ func (bus *RedisEventBus) Start(ctx context.Context) error {
 			wg.Add(1)
 			go func(subscriber pubsub.Subscriber) {
 				wg.Done()
-				if err := subscriber(context.Background(), strings.NewReader(msg.Payload)); err != nil {
+				ctx, cancel := context.WithCancel(context.Background())
+				defer cancel()
+
+				if err := subscriber(ctx, strings.NewReader(msg.Payload)); err != nil {
 					bus.logger.Error("failed to subscriber: %v", err)
 				}
 			}(subscriber)
