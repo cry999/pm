@@ -173,7 +173,9 @@ func (s *service) getTasks(ctx context.Context, prj *project.Project) ([]*task.T
 		}
 		task, err := s.taskRepository.Find(ctx, taskID)
 		if err != nil {
-			return nil, err
+			// TODO: getTasks may fail because `Planned` event may be thrown before completion
+			// TODO: of creating task. So, currently error is ignored
+			continue
 		}
 		tasks = append(tasks, task)
 	}
